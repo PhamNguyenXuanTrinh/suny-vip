@@ -1,0 +1,18 @@
+{
+  "passed": 11,
+  "checks": [
+    "Server filtering, descending sorting and pagination return the right rows",
+    "Returning from detail retains filters, sorting and page",
+    "Column sorting requests a real ordered page from the server",
+    "Clearing an optional field persists NULL and sends only the changed field",
+    "Editing a draft header retains line IDs already referenced by another document",
+    "Task reassignment runs through the real API and retains the removed assignment",
+    "Department hierarchy and responsible manager display from stored relationships",
+    "Server validation marks the exact invalid field with a Vietnamese message",
+    "Corrected form resubmits successfully after validation failure",
+    "Revoking another session invalidates its access while the current session remains usable",
+    "No browser runtime errors in added completeness workflows"
+  ],
+  "browser_errors": [],
+  "live_openai": false
+}

@@ -1,0 +1,10 @@
+{
+  "business_tables": 44,
+  "domain_and_support_tables": 51,
+  "foreign_key_constraints_compared": 152,
+  "all_fk_definitions_match": true,
+  "mismatched_tables": [],
+  "integrity": "ok",
+  "foreign_key_errors": [],
+  "migration_head": "0007_exact_discount"
+}

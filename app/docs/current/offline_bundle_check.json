@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "manifest_files_verified": 8398,
+  "python": "3.13.16",
+  "python_path_in_bundle": true,
+  "runtime_requires_host_python_or_node": false,
+  "fresh_private_data": true,
+  "browser_setup_server_start": true,
+  "forced_password_change": true,
+  "authenticated_crud": true,
+  "private_document_upload_download": true,
+  "complete_backup_restore": true,
+  "restored_snapshot_correct": true,
+  "previous_data_retained": true,
+  "previous_sessions_revoked": true,
+  "frontend_and_local_api_docs": true,
+  "erp_without_api_key": true,
+  "outbound_http_proxy_disabled_for_test": true,
+  "windows_runtime_audit": {
+    "runtime_packages": 31,
+    "dependency_errors": [],
+    "windows_x64_binaries": 50,
+    "host_libraries_included": false,
+    "native_windows_execution": false
+  },
+  "actual_windows_execution": false,
+  "actual_production_data": false
+}

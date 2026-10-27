@@ -1,0 +1,44 @@
+{
+  "passed": 15,
+  "checks": [
+    "Sites, two warehouses, materials, finished goods and supplier created through UI",
+    "Purchase approval and receiving create actual stock through UI",
+    "Supplier bill and verified payment reconcile to fully paid",
+    "BOM is selected by code/version and production order saves real operations",
+    "Worker account, site scope and production assignment configured through UI",
+    "Assigned worker starts and reports production from a 390 px mobile UI",
+    "Worker task update persists and marks actual completion",
+    "Production completion reconciles final output without double counting",
+    "BOM consumption and actual material costing reconcile in inventory",
+    "Partial stock transfer ships and receives through UI",
+    "Delivery from real finished stock completes the linked sales order",
+    "Issued invoice and verified customer receipt reconcile to paid",
+    "Dashboard reconciles revenue, zero AR/AP and remaining inventory to source documents",
+    "Management reports use the server business date",
+    "No browser runtime errors in the full procurement-to-cash workflow"
+  ],
+  "browser_errors": [],
+  "all_business_writes_through_ui": true,
+  "final_dashboard": {
+    "generated_at": "2026-10-25T22:07:05.547710Z",
+    "source_tables": [
+      "customer_invoices",
+      "supplier_bills",
+      "payment_allocation_events",
+      "inventory_movements",
+      "inventory_units"
+    ],
+    "revenue_vnd": 135000,
+    "receivables_vnd": 0,
+    "payables_vnd": 0,
+    "inventory_value_vnd": 186664,
+    "as_of": "2026-10-26",
+    "currency": "VND",
+    "definitions": {
+      "revenue": "Issued business invoices before VAT through the report date; excludes cancelled/draft invoices",
+      "receivables": "Invoice balances after allocation events; customer advances are not subtracted until allocated",
+      "inventory": "On-hand unit cost plus goods in transit"
+    }
+  },
+  "live_openai": false
+}

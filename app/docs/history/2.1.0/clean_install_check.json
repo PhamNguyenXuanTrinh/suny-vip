@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "manifest_files_verified": 227,
+  "setup_without_api_key": true,
+  "frontend_check": true,
+  "database_check": {
+    "integrity": "ok",
+    "foreign_key_errors": []
+  },
+  "runtime": {
+    "passed": true,
+    "source_loaded_from_extracted_package": true,
+    "forced_password_change": true,
+    "authenticated_crud": true,
+    "frontend_served": true,
+    "local_api_documentation": true,
+    "erp_works_without_openai_key": true,
+    "database_reconciled": true
+  },
+  "tested_platform": "Linux Python 3.12; existing clean virtual environment with requirements.lock.txt",
+  "actual_windows_execution": false,
+  "actual_production_data": false
+}

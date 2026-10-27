@@ -1,0 +1,711 @@
+erDiagram
+    direction TB
+    organizations {
+        uuid id PK
+        string code UK
+        string name
+        string tax_code
+        string address
+        string phone
+        string email
+        string base_currency
+        boolean is_active
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    sites {
+        uuid id PK
+        uuid organization_id FK
+        string code
+        string name
+        string address
+        boolean is_active
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    departments {
+        uuid id PK
+        uuid organization_id FK
+        uuid parent_department_id FK
+        string code
+        string name
+        uuid manager_employee_id FK
+        boolean is_active
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    employees {
+        uuid id PK
+        uuid organization_id FK
+        uuid site_id FK
+        uuid department_id FK
+        string employee_code
+        string full_name
+        string phone
+        string email
+        string job_title
+        string status
+        date hired_on
+        date terminated_on
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    app_users {
+        uuid id PK
+        uuid organization_id FK
+        uuid employee_id FK
+        string username UK
+        string password_hash
+        boolean is_active
+        boolean must_change_password
+        bigint failed_login_count
+        datetimeUTC locked_until
+        datetimeUTC last_login_at
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    roles {
+        uuid id PK
+        uuid organization_id FK
+        string code
+        string name
+        string description
+        boolean is_system
+        boolean is_active
+        datetimeUTC created_at
+    }
+    user_roles {
+        uuid id PK
+        uuid user_id FK
+        uuid role_id FK
+        uuid site_id FK
+        uuid assigned_by FK
+        datetimeUTC assigned_at
+        uuid organization_id FK
+    }
+    customers {
+        uuid id PK
+        uuid organization_id FK
+        string customer_code
+        string name
+        string tax_code
+        string phone
+        string email
+        string billing_address
+        string shipping_address
+        string status
+        uuid owner_employee_id FK
+        bigint current_debt_amount
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    customer_contacts {
+        uuid id PK
+        uuid customer_id FK
+        string full_name
+        string title
+        string phone
+        string email
+        boolean is_primary
+        uuid organization_id FK
+    }
+    products {
+        uuid id PK
+        uuid organization_id FK
+        string sku UK
+        string name
+        string description
+        string product_type
+        string base_uom
+        string tracking_method
+        bigint standard_cost
+        boolean is_purchasable
+        boolean is_sellable
+        boolean is_manufactured
+        boolean is_active
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    sales_orders {
+        uuid id PK
+        uuid organization_id FK
+        string order_code
+        uuid customer_id FK
+        datetimeUTC ordered_at
+        datetimeUTC required_delivery_at
+        string status
+        bigint subtotal_amount
+        bigint discount_amount
+        bigint tax_amount
+        bigint total_amount
+        string currency
+        string notes
+        uuid created_by FK
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    sales_order_lines {
+        uuid id PK
+        uuid order_id FK
+        bigint line_no
+        uuid product_id FK
+        string description
+        decimal18_6 quantity
+        string uom
+        bigint unit_price
+        bigint discount_amount
+        bigint tax_rate
+        bigint line_total
+        uuid organization_id FK
+    }
+    shipments {
+        uuid id PK
+        uuid organization_id FK
+        string shipment_code
+        uuid customer_id FK
+        uuid sales_order_id FK
+        datetimeUTC shipped_at
+        datetimeUTC delivered_at
+        string carrier
+        string tracking_no
+        string status
+        uuid created_by FK
+        datetimeUTC created_at
+    }
+    shipment_lines {
+        uuid id PK
+        uuid shipment_id FK
+        uuid sales_order_line_id FK
+        uuid product_id FK
+        decimal18_6 quantity
+        string uom
+        uuid organization_id FK
+    }
+    suppliers {
+        uuid id PK
+        uuid organization_id FK
+        string supplier_code
+        string name
+        string tax_code
+        string phone
+        string email
+        string address
+        string status
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    purchase_orders {
+        uuid id PK
+        uuid organization_id FK
+        string po_code
+        uuid supplier_id FK
+        datetimeUTC ordered_at
+        date expected_date
+        string status
+        string currency
+        bigint subtotal_amount
+        bigint tax_amount
+        bigint total_amount
+        uuid created_by FK
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    purchase_order_lines {
+        uuid id PK
+        uuid purchase_order_id FK
+        bigint line_no
+        uuid product_id FK
+        string description
+        decimal18_6 quantity
+        decimal18_6 received_quantity
+        string uom
+        bigint unit_price
+        bigint tax_amount
+        uuid organization_id FK
+    }
+    supplier_bills {
+        uuid id PK
+        uuid organization_id FK
+        uuid supplier_id FK
+        uuid purchase_order_id FK
+        string bill_no
+        date bill_date
+        date due_date
+        bigint subtotal_amount
+        bigint tax_amount
+        bigint total_amount
+        string currency
+        string status
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    supplier_payments {
+        uuid id PK
+        uuid organization_id FK
+        uuid supplier_id FK
+        string payment_code
+        datetimeUTC paid_at
+        bigint amount
+        string currency
+        string payment_method
+        string external_reference
+        string status
+        uuid created_by FK
+        datetimeUTC created_at
+    }
+    warehouses {
+        uuid id PK
+        uuid organization_id FK
+        uuid site_id FK
+        string code
+        string name
+        string location
+        boolean is_active
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    warehouse_locations {
+        uuid id PK
+        uuid warehouse_id FK
+        string code
+        string name
+        string location_type
+        boolean is_active
+        uuid organization_id FK
+    }
+    inventory_lots {
+        uuid id PK
+        uuid organization_id FK
+        uuid product_id FK
+        string lot_code
+        uuid supplier_id FK
+        date manufactured_at
+        date expires_at
+        datetimeUTC received_at
+        uuid source_document_id FK
+        datetimeUTC created_at
+    }
+    inventory_units {
+        uuid id PK
+        uuid organization_id FK
+        uuid product_id FK
+        uuid lot_id FK
+        string roll_code
+        uuid warehouse_id FK
+        uuid location_id FK
+        decimal18_6 initial_quantity
+        decimal18_6 remaining_quantity
+        string uom
+        bigint unit_cost
+        string status
+        datetimeUTC received_at
+        datetimeUTC updated_at
+    }
+    inventory_movements {
+        uuid id PK
+        uuid organization_id FK
+        string movement_code
+        string movement_type
+        uuid product_id FK
+        uuid inventory_unit_id FK
+        uuid lot_id FK
+        uuid warehouse_id FK
+        uuid location_id FK
+        decimal18_6 quantity_delta
+        bigint unit_cost
+        bigint total_value
+        datetimeUTC occurred_at
+        string reference_type
+        uuid reference_id
+        string idempotency_key
+        uuid actor_user_id FK
+        datetimeUTC created_at
+    }
+    stock_transfers {
+        uuid id PK
+        uuid organization_id FK
+        string transfer_code
+        uuid from_warehouse_id FK
+        uuid to_warehouse_id FK
+        datetimeUTC requested_at
+        datetimeUTC shipped_at
+        datetimeUTC received_at
+        string status
+        uuid created_by FK
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    stock_transfer_lines {
+        uuid id PK
+        uuid transfer_id FK
+        uuid product_id FK
+        uuid inventory_unit_id FK
+        uuid lot_id FK
+        decimal18_6 quantity
+        string uom
+        uuid organization_id FK
+    }
+    bills_of_materials {
+        uuid id PK
+        uuid organization_id FK
+        string bom_code
+        uuid product_id FK
+        bigint version_no
+        decimal18_6 output_quantity
+        date effective_from
+        date effective_to
+        string status
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    bom_lines {
+        uuid id PK
+        uuid bom_id FK
+        bigint line_no
+        uuid component_product_id FK
+        decimal18_6 quantity
+        string uom
+        bigint scrap_rate
+        uuid organization_id FK
+    }
+    work_centers {
+        uuid id PK
+        uuid organization_id FK
+        uuid site_id FK
+        string code
+        string name
+        bigint capacity_minutes_per_day
+        boolean is_active
+        datetimeUTC created_at
+    }
+    machines {
+        uuid id PK
+        uuid organization_id FK
+        uuid work_center_id FK
+        string machine_code
+        string name
+        string serial_no
+        string status
+        date commissioned_on
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    production_orders {
+        uuid id PK
+        uuid organization_id FK
+        string production_order_code
+        uuid product_id FK
+        uuid bom_id FK
+        uuid sales_order_line_id FK
+        decimal18_6 planned_quantity
+        decimal18_6 released_quantity
+        decimal18_6 good_quantity
+        decimal18_6 scrap_quantity
+        datetimeUTC planned_start_at
+        datetimeUTC planned_end_at
+        datetimeUTC actual_start_at
+        datetimeUTC actual_end_at
+        string status
+        uuid created_by FK
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    production_order_operations {
+        uuid id PK
+        uuid production_order_id FK
+        bigint sequence_no
+        uuid work_center_id FK
+        uuid machine_id FK
+        datetimeUTC planned_start_at
+        datetimeUTC planned_end_at
+        datetimeUTC actual_start_at
+        datetimeUTC actual_end_at
+        string status
+        datetimeUTC created_at
+        datetimeUTC updated_at
+        uuid organization_id FK
+    }
+    production_reports {
+        uuid id PK
+        uuid organization_id FK
+        uuid production_order_id FK
+        uuid operation_id FK
+        uuid reported_by FK
+        datetimeUTC reported_at
+        decimal18_6 good_quantity
+        decimal18_6 scrap_quantity
+        bigint scrap_value
+        bigint downtime_minutes
+        string downtime_reason
+        string notes
+        datetimeUTC created_at
+    }
+    tasks {
+        uuid id PK
+        uuid organization_id FK
+        string task_code
+        string title
+        string description
+        string task_type
+        string priority
+        string status
+        uuid created_by FK
+        uuid production_order_id FK
+        datetimeUTC start_at
+        datetimeUTC due_at
+        datetimeUTC completed_at
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    task_assignees {
+        uuid id PK
+        uuid task_id FK
+        uuid employee_id FK
+        uuid assigned_by FK
+        datetimeUTC assigned_at
+        string status
+        uuid organization_id FK
+    }
+    task_updates {
+        uuid id PK
+        uuid task_id FK
+        uuid employee_id FK
+        string update_type
+        string content
+        bigint progress_percent
+        datetimeUTC created_at
+        uuid organization_id FK
+    }
+    customer_invoices {
+        uuid id PK
+        uuid organization_id FK
+        string invoice_no
+        uuid customer_id FK
+        uuid sales_order_id FK
+        date invoice_date
+        date due_date
+        string currency
+        bigint subtotal_amount
+        bigint tax_amount
+        bigint total_amount
+        string status
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    customer_invoice_lines {
+        uuid id PK
+        uuid invoice_id FK
+        bigint line_no
+        uuid sales_order_line_id FK
+        string description
+        decimal18_6 quantity
+        string uom
+        bigint unit_price
+        bigint tax_amount
+        bigint line_total
+        uuid organization_id FK
+    }
+    customer_receipts {
+        uuid id PK
+        uuid organization_id FK
+        string receipt_code
+        uuid customer_id FK
+        datetimeUTC received_at
+        bigint amount
+        string currency
+        string payment_method
+        string external_reference
+        string status
+        uuid verified_by FK
+        datetimeUTC created_at
+    }
+    customer_payment_allocations {
+        uuid id PK
+        uuid receipt_id FK
+        uuid invoice_id FK
+        bigint amount
+        datetimeUTC created_at
+        uuid created_by FK
+        uuid organization_id FK
+    }
+    documents {
+        uuid id PK
+        uuid organization_id FK
+        string original_name
+        string media_type
+        bigint byte_size
+        string storage_key UK
+        string sha256
+        uuid uploaded_by FK
+        datetimeUTC received_at
+        string source_kind
+        datetimeUTC created_at
+    }
+    audit_log {
+        uuid id PK
+        uuid organization_id FK
+        uuid actor_user_id FK
+        string action
+        string entity_type
+        uuid entity_id
+        string old_json
+        string new_json
+        datetimeUTC occurred_at
+        string request_id
+        string ip_address
+    }
+    kpi_targets {
+        uuid id PK
+        uuid organization_id FK
+        uuid employee_id FK
+        uuid assigned_by FK
+        string kpi_type
+        bigint target_amount
+        decimal18_6 target_value
+        date period_start
+        date period_end
+        string status
+        datetimeUTC created_at
+        datetimeUTC updated_at
+    }
+    notifications {
+        uuid id PK
+        uuid organization_id FK
+        uuid user_id FK
+        string title
+        string content
+        string type
+        boolean is_read
+        datetimeUTC created_at
+        datetimeUTC read_at
+    }
+    organizations ||--o{ sites : "organization_id"
+    organizations ||--o{ departments : "organization_id"
+    departments |o--o{ departments : "parent_department_id"
+    employees |o--o{ departments : "manager_employee_id"
+    organizations ||--o{ employees : "organization_id"
+    sites |o--o{ employees : "site_id"
+    departments |o--o{ employees : "department_id"
+    organizations ||--o{ app_users : "organization_id"
+    employees ||--o{ app_users : "employee_id"
+    organizations ||--o{ roles : "organization_id"
+    app_users ||--o{ user_roles : "user_id"
+    roles ||--o{ user_roles : "role_id"
+    sites |o--o{ user_roles : "site_id"
+    app_users |o--o{ user_roles : "assigned_by"
+    organizations ||--o{ user_roles : "organization_id"
+    organizations ||--o{ customers : "organization_id"
+    employees |o--o{ customers : "owner_employee_id"
+    customers ||--o{ customer_contacts : "customer_id"
+    organizations ||--o{ customer_contacts : "organization_id"
+    organizations ||--o{ products : "organization_id"
+    organizations ||--o{ sales_orders : "organization_id"
+    customers ||--o{ sales_orders : "customer_id"
+    app_users ||--o{ sales_orders : "created_by"
+    sales_orders ||--o{ sales_order_lines : "order_id"
+    products ||--o{ sales_order_lines : "product_id"
+    organizations ||--o{ sales_order_lines : "organization_id"
+    organizations ||--o{ shipments : "organization_id"
+    customers ||--o{ shipments : "customer_id"
+    sales_orders |o--o{ shipments : "sales_order_id"
+    app_users ||--o{ shipments : "created_by"
+    shipments ||--o{ shipment_lines : "shipment_id"
+    sales_order_lines |o--o{ shipment_lines : "sales_order_line_id"
+    products ||--o{ shipment_lines : "product_id"
+    organizations ||--o{ shipment_lines : "organization_id"
+    organizations ||--o{ suppliers : "organization_id"
+    organizations ||--o{ purchase_orders : "organization_id"
+    suppliers ||--o{ purchase_orders : "supplier_id"
+    app_users ||--o{ purchase_orders : "created_by"
+    purchase_orders ||--o{ purchase_order_lines : "purchase_order_id"
+    products ||--o{ purchase_order_lines : "product_id"
+    organizations ||--o{ purchase_order_lines : "organization_id"
+    organizations ||--o{ supplier_bills : "organization_id"
+    suppliers ||--o{ supplier_bills : "supplier_id"
+    purchase_orders |o--o{ supplier_bills : "purchase_order_id"
+    organizations ||--o{ supplier_payments : "organization_id"
+    suppliers ||--o{ supplier_payments : "supplier_id"
+    app_users ||--o{ supplier_payments : "created_by"
+    organizations ||--o{ warehouses : "organization_id"
+    sites ||--o{ warehouses : "site_id"
+    warehouses ||--o{ warehouse_locations : "warehouse_id"
+    organizations ||--o{ warehouse_locations : "organization_id"
+    organizations ||--o{ inventory_lots : "organization_id"
+    products ||--o{ inventory_lots : "product_id"
+    suppliers |o--o{ inventory_lots : "supplier_id"
+    documents |o--o{ inventory_lots : "source_document_id"
+    organizations ||--o{ inventory_units : "organization_id"
+    products ||--o{ inventory_units : "product_id"
+    inventory_lots |o--o{ inventory_units : "lot_id"
+    warehouses ||--o{ inventory_units : "warehouse_id"
+    warehouse_locations |o--o{ inventory_units : "location_id"
+    organizations ||--o{ inventory_movements : "organization_id"
+    products ||--o{ inventory_movements : "product_id"
+    inventory_units |o--o{ inventory_movements : "inventory_unit_id"
+    inventory_lots |o--o{ inventory_movements : "lot_id"
+    warehouses ||--o{ inventory_movements : "warehouse_id"
+    warehouse_locations |o--o{ inventory_movements : "location_id"
+    app_users ||--o{ inventory_movements : "actor_user_id"
+    organizations ||--o{ stock_transfers : "organization_id"
+    warehouses ||--o{ stock_transfers : "from_warehouse_id"
+    warehouses ||--o{ stock_transfers : "to_warehouse_id"
+    app_users ||--o{ stock_transfers : "created_by"
+    stock_transfers ||--o{ stock_transfer_lines : "transfer_id"
+    products ||--o{ stock_transfer_lines : "product_id"
+    inventory_units |o--o{ stock_transfer_lines : "inventory_unit_id"
+    inventory_lots |o--o{ stock_transfer_lines : "lot_id"
+    organizations ||--o{ stock_transfer_lines : "organization_id"
+    organizations ||--o{ bills_of_materials : "organization_id"
+    products ||--o{ bills_of_materials : "product_id"
+    bills_of_materials ||--o{ bom_lines : "bom_id"
+    products ||--o{ bom_lines : "component_product_id"
+    organizations ||--o{ bom_lines : "organization_id"
+    organizations ||--o{ work_centers : "organization_id"
+    sites ||--o{ work_centers : "site_id"
+    organizations ||--o{ machines : "organization_id"
+    work_centers ||--o{ machines : "work_center_id"
+    organizations ||--o{ production_orders : "organization_id"
+    products ||--o{ production_orders : "product_id"
+    bills_of_materials ||--o{ production_orders : "bom_id"
+    sales_order_lines |o--o{ production_orders : "sales_order_line_id"
+    app_users ||--o{ production_orders : "created_by"
+    production_orders ||--o{ production_order_operations : "production_order_id"
+    work_centers ||--o{ production_order_operations : "work_center_id"
+    machines |o--o{ production_order_operations : "machine_id"
+    organizations ||--o{ production_order_operations : "organization_id"
+    organizations ||--o{ production_reports : "organization_id"
+    production_orders ||--o{ production_reports : "production_order_id"
+    production_order_operations |o--o{ production_reports : "operation_id"
+    app_users ||--o{ production_reports : "reported_by"
+    organizations ||--o{ tasks : "organization_id"
+    app_users ||--o{ tasks : "created_by"
+    production_orders |o--o{ tasks : "production_order_id"
+    tasks ||--o{ task_assignees : "task_id"
+    employees ||--o{ task_assignees : "employee_id"
+    app_users ||--o{ task_assignees : "assigned_by"
+    organizations ||--o{ task_assignees : "organization_id"
+    tasks ||--o{ task_updates : "task_id"
+    employees ||--o{ task_updates : "employee_id"
+    organizations ||--o{ task_updates : "organization_id"
+    organizations ||--o{ customer_invoices : "organization_id"
+    customers ||--o{ customer_invoices : "customer_id"
+    sales_orders |o--o{ customer_invoices : "sales_order_id"
+    customer_invoices ||--o{ customer_invoice_lines : "invoice_id"
+    sales_order_lines |o--o{ customer_invoice_lines : "sales_order_line_id"
+    organizations ||--o{ customer_invoice_lines : "organization_id"
+    organizations ||--o{ customer_receipts : "organization_id"
+    customers ||--o{ customer_receipts : "customer_id"
+    app_users |o--o{ customer_receipts : "verified_by"
+    customer_receipts ||--o{ customer_payment_allocations : "receipt_id"
+    customer_invoices ||--o{ customer_payment_allocations : "invoice_id"
+    app_users |o--o{ customer_payment_allocations : "created_by"
+    organizations ||--o{ customer_payment_allocations : "organization_id"
+    organizations ||--o{ documents : "organization_id"
+    app_users ||--o{ documents : "uploaded_by"
+    organizations ||--o{ audit_log : "organization_id"
+    app_users |o--o{ audit_log : "actor_user_id"
+    organizations ||--o{ kpi_targets : "organization_id"
+    employees ||--o{ kpi_targets : "employee_id"
+    app_users ||--o{ kpi_targets : "assigned_by"
+    organizations ||--o{ notifications : "organization_id"
+    app_users |o--o{ notifications : "user_id"

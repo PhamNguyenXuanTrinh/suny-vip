@@ -1,0 +1,413 @@
+{
+  "source": "SUNNY_AI_FLEX_3D_ERP_AI_Implementation_Prompt.docx section 4.2",
+  "methods": [
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/users"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/users/{id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/users/{id}/roles"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sites"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sites"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/sites/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/departments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/departments"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/departments/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/employees"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/employees"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/employees/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/employees/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/customers/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sales-orders"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sales-orders"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/sales-orders/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/sales-orders/{id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/sales-orders/{id}/confirm"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/shipments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/shipments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/shipments/{id}/ship"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/shipments/{id}/deliver"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/suppliers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/suppliers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/suppliers/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/suppliers/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/purchase-orders"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/purchase-orders"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/purchase-orders/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/purchase-orders/{id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/purchase-orders/{id}/approve"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/purchase-orders/{id}/receive"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/supplier-bills"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/supplier-bills"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/supplier-payments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/supplier-payments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/warehouses"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/warehouses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/warehouse-locations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/warehouse-locations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/inventory-units"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/inventory-movements"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/inventory-movements/receipt"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/inventory-movements/adjustment"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/stock-transfers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stock-transfers"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stock-transfers/{id}/ship"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/stock-transfers/{id}/receive"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/boms"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/boms"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/boms/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/boms/{id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/boms/{id}/activate"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/production-orders"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/production-orders"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/production-orders/{id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/production-orders/{id}/start"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/production-orders/{id}/reports"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/production-orders/{id}/complete"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customer-invoices"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customer-invoices"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customer-invoices/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/customer-invoices/{id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customer-invoices/{id}/issue"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customer-receipts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customer-receipts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customer-receipts/{id}/verify"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customer-receipts/{id}/allocations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/kpi-targets"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/kpi-targets"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/ar-aging"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/ap-aging"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ai/chat"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/conversations/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/notifications"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/notifications/{id}/read"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/dashboard-money"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/production"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/audit-log"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tasks"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tasks/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/tasks/{id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/{id}/assignees"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tasks/{id}/updates"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/documents"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/documents"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/documents/{id}/download"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/products"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/{id}"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/products/{id}"
+    }
+  ]
+}

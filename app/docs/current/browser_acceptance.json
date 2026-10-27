@@ -1,0 +1,22 @@
+{
+  "passed": 15,
+  "checks": [
+    "Desktop login and real dashboard",
+    "Customer created through UI and API",
+    "Product saved to the real database",
+    "Sales order submitted and confirmed from UI",
+    "Invoice issued from UI with backend totals",
+    "Verified receipt and payment allocation from UI",
+    "AI stays explicitly unavailable without a key",
+    "Mobile navigation, usable search and filter panel at 390 px",
+    "CTV menu follows actual backend permissions",
+    "Direct unauthorized screen remains blocked",
+    "CTV cannot read another owner customer through UI",
+    "Self-hosted authenticated OpenAPI documentation",
+    "Password change and a new role do not reuse previous account data",
+    "No browser runtime errors",
+    "Logout clears the session"
+  ],
+  "browser_errors": [],
+  "live_openai": false
+}

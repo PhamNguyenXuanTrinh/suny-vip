@@ -1,0 +1,22 @@
+{
+  "passed": 13,
+  "checks": [
+    "Clean first launch opens setup instead of demo data",
+    "Browser setup provisions a real organization and starts the ERP",
+    "First administrator must change the password before working",
+    "Fresh desktop installation saves business records",
+    "One-click full backup creates a verified archive",
+    "Restore stops the server, preserves prior data, verifies and restarts",
+    "Restored database rejects sessions from before restore",
+    "Restore recovers the selected data snapshot",
+    "Stop shuts down the actual ERP process",
+    "Restart opens the persisted database",
+    "Local operator can enable the LAN server",
+    "Local control center fits a 390 px viewport",
+    "No browser runtime errors in setup or operations"
+  ],
+  "browser_errors": [],
+  "platform": "Bundled Linux CPython 3.13.16; real subprocess and Chromium",
+  "native_windows": false,
+  "live_openai": false
+}

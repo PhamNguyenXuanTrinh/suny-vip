@@ -1,0 +1,40 @@
+{
+  "application_version": "2.2.0",
+  "backend": {
+    "tests": 143,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "backend_environments": {
+    "bundled_Linux_Python_3_13_16": {
+      "passed": 143
+    }
+  },
+  "new_contract_tests": 82,
+  "legacy_regression_tests": 61,
+  "documented_required_api_methods": 102,
+  "implemented_api_method_paths": 188,
+  "business_tables": 44,
+  "domain_and_support_tables": 51,
+  "migration_revisions": 7,
+  "browser_checks": 54,
+  "browser_suites": {
+    "base_ui_and_scope": 15,
+    "procurement_production_sales_finance": 15,
+    "completeness_workflows": 11,
+    "setup_and_operations": 13
+  },
+  "frontend_typecheck": "passed",
+  "frontend_lint": "passed",
+  "frontend_build": "passed",
+  "native_windows_execution": false,
+  "live_openai_verified": false,
+  "production_acceptance": false,
+  "clean_extracted_offline_bundle_install": "passed_with_bundled_runtime",
+  "windows_runtime_static_audit": {
+    "dependency_errors": 0,
+    "runtime_packages": 31,
+    "pe_x64_binaries": 50
+  }
+}

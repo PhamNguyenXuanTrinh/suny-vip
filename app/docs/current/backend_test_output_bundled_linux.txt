@@ -1,0 +1,13 @@
+........................................................................ [ 50%]
+.......................................................................  [100%]
+=============================== warnings summary ===============================
+../recovered/bundle/SUNNY_ERP/runtime/linux/lib/python3.13/site-packages/starlette/testclient.py:37
+  /workspace/scratch/0f5d1bb9005f/recovered/bundle/SUNNY_ERP/runtime/linux/lib/python3.13/site-packages/starlette/testclient.py:37: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]
+
+tests/current/test_contract_and_isolation_matrix.py::test_migrations_and_sqlalchemy_schema_have_no_drift
+  /workspace/scratch/0f5d1bb9005f/SUNNY_ERP_REVIEW/tests/current/test_contract_and_isolation_matrix.py:17: SAWarning: Cannot correctly sort tables; there are unresolvable cycles between tables "departments, employees", which is usually caused by mutually dependent foreign key constraints.  Foreign key constraints involving these tables will not be considered; this warning may raise an error in a future release.
+    assert compare_metadata(MigrationContext.configure(c),md)==[]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+143 passed, 2 warnings in 46.89s

@@ -1,0 +1,10 @@
+{
+  "name": "zustand",
+  "version": "5.0.3",
+  "license": "MIT",
+  "author": "Paul Henschel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pmndrs/zustand.git"
+  }
+}

@@ -1,0 +1,9 @@
+﻿runtime/
+app/.venv/
+__pycache__/
+*.pyc
+*.sqlite3
+app/node_modules/
+app/frontend/node_modules/
+app/dist/
+.env.local

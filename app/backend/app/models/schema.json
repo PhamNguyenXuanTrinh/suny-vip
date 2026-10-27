@@ -1,0 +1,4578 @@
+{
+  "organizations": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính do backend sinh.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "code": {
+        "contract": "VARCHAR(50) / UNIQUE",
+        "description": "Mã tổ chức; duy nhất toàn hệ thống.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(200) / NOT NULL",
+        "description": "Tên tổ chức.",
+        "nullable": false,
+        "type": "string",
+        "length": 200
+      },
+      "tax_code": {
+        "contract": "VARCHAR(50) / NULL",
+        "description": "Mã số thuế.",
+        "nullable": true,
+        "type": "string",
+        "length": 50
+      },
+      "address": {
+        "contract": "TEXT / NULL",
+        "description": "Địa chỉ.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "phone": {
+        "contract": "VARCHAR(30) / NULL",
+        "description": "Số điện thoại.",
+        "nullable": true,
+        "type": "string",
+        "length": 30
+      },
+      "email": {
+        "contract": "VARCHAR(255) / NULL",
+        "description": "Email liên hệ.",
+        "nullable": true,
+        "type": "string",
+        "length": 255
+      },
+      "base_currency": {
+        "contract": "CHAR(3) / DEFAULT VND",
+        "description": "Bản phát hành 1 chỉ hỗ trợ VND.",
+        "nullable": false,
+        "type": "string",
+        "length": 3,
+        "enum": [
+          "VND"
+        ],
+        "default": "VND"
+      },
+      "is_active": {
+        "contract": "BOOLEAN / DEFAULT TRUE",
+        "description": "Ngừng hoạt động thì chặn đăng nhập/nghiệp vụ mới.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "created_at": {
+        "contract": "DATETIME / NOT NULL",
+        "description": "Thời điểm tạo, ISO 8601 UTC.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME / NOT NULL",
+        "description": "Thời điểm cập nhật gần nhất.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Root của toàn bộ dữ liệu theo tổ chức.",
+    "unique": [
+      [
+        "code"
+      ],
+      [
+        "code"
+      ]
+    ]
+  },
+  "sites": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "code": {
+        "contract": "VARCHAR(50) / NOT NULL",
+        "description": "Mã cơ sở.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(200) / NOT NULL",
+        "description": "Tên cơ sở.",
+        "nullable": false,
+        "type": "string",
+        "length": 200
+      },
+      "address": {
+        "contract": "TEXT / NULL",
+        "description": "Địa chỉ.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "is_active": {
+        "contract": "BOOLEAN / DEFAULT TRUE",
+        "description": "Trạng thái hoạt động.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, code).",
+    "unique": [
+      [
+        "organization_id",
+        "code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "departments": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "parent_department_id": {
+        "contract": "UUID / FK → departments.id / NULL",
+        "description": "Phòng ban cha; không được tạo chu trình.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "departments.id"
+      },
+      "code": {
+        "contract": "VARCHAR(50) / NOT NULL",
+        "description": "Mã phòng ban.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(200) / NOT NULL",
+        "description": "Tên phòng ban.",
+        "nullable": false,
+        "type": "string",
+        "length": 200
+      },
+      "manager_employee_id": {
+        "contract": "UUID / FK → employees.id / NULL",
+        "description": "Trưởng phòng; phải cùng tổ chức.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "employees.id"
+      },
+      "is_active": {
+        "contract": "BOOLEAN / DEFAULT TRUE",
+        "description": "Trạng thái.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, code); kiểm tra cùng tenant cho parent và manager.",
+    "unique": [
+      [
+        "organization_id",
+        "code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "employees": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "site_id": {
+        "contract": "UUID / FK → sites.id / NULL",
+        "description": "Cơ sở làm việc.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "sites.id"
+      },
+      "department_id": {
+        "contract": "UUID / FK → departments.id / NULL",
+        "description": "Phòng ban.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "departments.id"
+      },
+      "employee_code": {
+        "contract": "VARCHAR(50) / NOT NULL",
+        "description": "Mã nhân viên.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "full_name": {
+        "contract": "VARCHAR(200) / NOT NULL",
+        "description": "Họ và tên.",
+        "nullable": false,
+        "type": "string",
+        "length": 200
+      },
+      "phone": {
+        "contract": "VARCHAR(30) / NULL",
+        "description": "Số điện thoại.",
+        "nullable": true,
+        "type": "string",
+        "length": 30
+      },
+      "email": {
+        "contract": "VARCHAR(255) / NULL",
+        "description": "Email.",
+        "nullable": true,
+        "type": "string",
+        "length": 255
+      },
+      "job_title": {
+        "contract": "VARCHAR(120) / NULL",
+        "description": "Chức danh.",
+        "nullable": true,
+        "type": "string",
+        "length": 120
+      },
+      "status": {
+        "contract": "VARCHAR(30) / NOT NULL",
+        "description": "active, inactive, on_leave, terminated; kiểm tra ở backend/DB.",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "active",
+          "inactive",
+          "on_leave",
+          "terminated"
+        ],
+        "default": "active"
+      },
+      "hired_on": {
+        "contract": "DATE / NULL",
+        "description": "Ngày vào làm.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "terminated_on": {
+        "contract": "DATE / NULL",
+        "description": "Ngày nghỉ việc.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, employee_code); site/department phải cùng tenant.",
+    "unique": [
+      [
+        "organization_id",
+        "employee_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "app_users": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính; dùng trong JWT làm user_id.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "employee_id": {
+        "contract": "UUID / FK → employees.id / UNIQUE",
+        "description": "Một nhân viên tối đa một tài khoản trong mô hình hiện tại.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "employees.id"
+      },
+      "username": {
+        "contract": "VARCHAR(120) / UNIQUE",
+        "description": "Tên đăng nhập chuẩn hóa chữ thường; duy nhất toàn hệ thống.",
+        "nullable": false,
+        "type": "string",
+        "length": 120
+      },
+      "password_hash": {
+        "contract": "VARCHAR(255) / NOT NULL",
+        "description": "Chỉ lưu hash Argon2id/bcrypt, không lưu mật khẩu gốc.",
+        "nullable": false,
+        "type": "string",
+        "length": 255
+      },
+      "is_active": {
+        "contract": "BOOLEAN / DEFAULT TRUE",
+        "description": "Khóa tài khoản.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "must_change_password": {
+        "contract": "BOOLEAN / DEFAULT TRUE",
+        "description": "Buộc đổi mật khẩu khi cần.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "failed_login_count": {
+        "contract": "INTEGER / DEFAULT 0",
+        "description": "Bộ đếm đăng nhập thất bại.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "locked_until": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm hết khóa tạm.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "last_login_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Lần đăng nhập thành công gần nhất.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Kiểm tra organization_id của user trùng organization_id của employee. Token không được chứa quyền đã lỗi thời khi quyền bị thu hồi.",
+    "unique": [
+      [
+        "employee_id"
+      ],
+      [
+        "username"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "roles": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu vai trò.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "code": {
+        "contract": "VARCHAR(50) / NOT NULL",
+        "description": "ADMIN, SALES, ACCOUNTANT, QC_LEADER, WORKER, CTV…",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(120) / NOT NULL",
+        "description": "Tên hiển thị.",
+        "nullable": false,
+        "type": "string",
+        "length": 120
+      },
+      "description": {
+        "contract": "TEXT / NULL",
+        "description": "Mô tả.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "is_system": {
+        "contract": "BOOLEAN / DEFAULT FALSE",
+        "description": "Vai trò hệ thống; hạn chế sửa/xóa.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": false
+      },
+      "is_active": {
+        "contract": "BOOLEAN / DEFAULT TRUE",
+        "description": "Trạng thái.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, code).",
+    "unique": [
+      [
+        "organization_id",
+        "code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "user_roles": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Đảm bảo mọi bảng đều sử dụng UUID làm khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "user_id": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Tài khoản được gán.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "role_id": {
+        "contract": "UUID / FK → roles.id",
+        "description": "Vai trò được gán; phải cùng tenant.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "roles.id"
+      },
+      "site_id": {
+        "contract": "UUID / FK → sites.id / NULL",
+        "description": "NULL nghĩa là phạm vi toàn tổ chức nếu policy cho phép; có giá trị thì giới hạn cơ sở.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "sites.id"
+      },
+      "assigned_by": {
+        "contract": "UUID / FK → app_users.id / NULL",
+        "description": "Người gán quyền.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "assigned_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm gán.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(user_id, role_id, site_id) theo logic ứng dụng; chống gán lặp kể cả khi site_id NULL.",
+    "unique": [
+      [
+        "user_id",
+        "role_id",
+        "site_id"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ],
+    "partial_unique": {
+      "fields": [
+        "user_id",
+        "role_id"
+      ],
+      "where": "site_id IS NULL"
+    }
+  },
+  "customers": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "customer_code": {
+        "contract": "VARCHAR(50) / NOT NULL",
+        "description": "Mã khách hàng.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(200) / NOT NULL",
+        "description": "Tên khách hàng/doanh nghiệp.",
+        "nullable": false,
+        "type": "string",
+        "length": 200
+      },
+      "tax_code": {
+        "contract": "VARCHAR(50) / NULL",
+        "description": "Mã số thuế.",
+        "nullable": true,
+        "type": "string",
+        "length": 50
+      },
+      "phone": {
+        "contract": "VARCHAR(30) / NULL",
+        "description": "Điện thoại.",
+        "nullable": true,
+        "type": "string",
+        "length": 30
+      },
+      "email": {
+        "contract": "VARCHAR(255) / NULL",
+        "description": "Email.",
+        "nullable": true,
+        "type": "string",
+        "length": 255
+      },
+      "billing_address": {
+        "contract": "TEXT / NULL",
+        "description": "Địa chỉ xuất hóa đơn.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "shipping_address": {
+        "contract": "TEXT / NULL",
+        "description": "Địa chỉ giao hàng mặc định.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30) / NOT NULL",
+        "description": "active, inactive, blocked…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "active",
+          "inactive",
+          "blocked"
+        ],
+        "default": "active"
+      },
+      "owner_employee_id": {
+        "contract": "UUID / FK → employees.id / NULL",
+        "description": "Nhân viên/CTV phụ trách; dùng employee_id, không dùng user_id.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "employees.id"
+      },
+      "current_debt_amount": {
+        "contract": "INTEGER / VND / DEFAULT 0",
+        "description": "Số dư công nợ cache; phải đối soát với hóa đơn, phiếu thu và phân bổ.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, customer_code); số nợ là dữ liệu dẫn xuất, không phải sổ cái độc lập.",
+    "unique": [
+      [
+        "organization_id",
+        "customer_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "customer_contacts": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "customer_id": {
+        "contract": "UUID / FK → customers.id",
+        "description": "Khách hàng.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customers.id"
+      },
+      "full_name": {
+        "contract": "VARCHAR(200) / NOT NULL",
+        "description": "Họ tên liên hệ.",
+        "nullable": false,
+        "type": "string",
+        "length": 200
+      },
+      "title": {
+        "contract": "VARCHAR(120) / NULL",
+        "description": "Chức vụ.",
+        "nullable": true,
+        "type": "string",
+        "length": 120
+      },
+      "phone": {
+        "contract": "VARCHAR(30) / NULL",
+        "description": "Điện thoại.",
+        "nullable": true,
+        "type": "string",
+        "length": 30
+      },
+      "email": {
+        "contract": "VARCHAR(255) / NULL",
+        "description": "Email.",
+        "nullable": true,
+        "type": "string",
+        "length": 255
+      },
+      "is_primary": {
+        "contract": "BOOLEAN / DEFAULT FALSE",
+        "description": "Đầu mối chính; nên bảo đảm tối đa một liên hệ chính/khách hàng.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": false
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Dữ liệu tenant được xác định qua customers; mọi thao tác phải kiểm tra customer thuộc organization hiện tại.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ],
+    "partial_unique": {
+      "fields": [
+        "customer_id"
+      ],
+      "where": "is_primary = 1"
+    }
+  },
+  "products": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "sku": {
+        "contract": "VARCHAR(80) / NOT NULL",
+        "description": "Mã SKU; duy nhất trong một tổ chức.",
+        "nullable": false,
+        "type": "string",
+        "length": 80
+      },
+      "name": {
+        "contract": "VARCHAR(250) / NOT NULL",
+        "description": "Tên sản phẩm.",
+        "nullable": false,
+        "type": "string",
+        "length": 250
+      },
+      "description": {
+        "contract": "TEXT / NULL",
+        "description": "Mô tả.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "product_type": {
+        "contract": "VARCHAR(40) / NOT NULL",
+        "description": "raw_material, finished_good, semi_finished, service…",
+        "nullable": false,
+        "type": "string",
+        "length": 40,
+        "enum": [
+          "raw_material",
+          "finished_good",
+          "semi_finished",
+          "service"
+        ],
+        "default": "raw_material"
+      },
+      "base_uom": {
+        "contract": "VARCHAR(20) / NOT NULL",
+        "description": "Đơn vị cơ sở; ví dụ m, kg, cuộn, cái.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "tracking_method": {
+        "contract": "VARCHAR(30) / NOT NULL",
+        "description": "none, lot, serial/roll; điều khiển truy xuất tồn kho.",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "none",
+          "lot",
+          "serial",
+          "roll"
+        ],
+        "default": "none"
+      },
+      "standard_cost": {
+        "contract": "INTEGER / VND / DEFAULT 0",
+        "description": "Giá vốn chuẩn tham chiếu, không thay thế giá vốn thực tế của từng bút toán.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "is_purchasable": {
+        "contract": "BOOLEAN",
+        "description": "Có thể mua.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "is_sellable": {
+        "contract": "BOOLEAN",
+        "description": "Có thể bán.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "is_manufactured": {
+        "contract": "BOOLEAN",
+        "description": "Có thể sản xuất.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": false
+      },
+      "is_active": {
+        "contract": "BOOLEAN",
+        "description": "Trạng thái.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, sku), không dùng UNIQUE(sku) toàn hệ thống trong mô hình đa tổ chức.",
+    "unique": [
+      [
+        "organization_id",
+        "sku"
+      ],
+      [
+        "sku"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "sales_orders": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "order_code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã đơn hàng.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "customer_id": {
+        "contract": "UUID / FK → customers.id",
+        "description": "Khách hàng; phải cùng tenant.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customers.id"
+      },
+      "ordered_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm đặt đơn.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "required_delivery_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm giao dự kiến.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30) / NOT NULL",
+        "description": "draft, confirmed, in_progress, completed, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "confirmed",
+          "in_progress",
+          "completed",
+          "cancelled"
+        ],
+        "default": "draft"
+      },
+      "subtotal_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng trước giảm giá/thuế theo quy tắc đã chốt.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "discount_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng chiết khấu.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "tax_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng thuế.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "total_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng phải thu của đơn.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "currency": {
+        "contract": "CHAR(3) / DEFAULT VND",
+        "description": "Phiên bản 1 chỉ chấp nhận VND.",
+        "nullable": false,
+        "type": "string",
+        "length": 3,
+        "enum": [
+          "VND"
+        ],
+        "default": "VND"
+      },
+      "notes": {
+        "contract": "TEXT / NULL",
+        "description": "Ghi chú.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người tạo.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, order_code). Quyền CTV lọc đơn thông qua customers.owner_employee_id.",
+    "unique": [
+      [
+        "organization_id",
+        "order_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "sales_order_lines": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "order_id": {
+        "contract": "UUID / FK → sales_orders.id",
+        "description": "Đơn hàng.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "sales_orders.id"
+      },
+      "line_no": {
+        "contract": "INTEGER / NOT NULL",
+        "description": "Số thứ tự dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Sản phẩm.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "description": {
+        "contract": "TEXT / NULL",
+        "description": "Mô tả tại thời điểm chốt đơn.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng, hỗ trợ chiều dài/khối lượng.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "uom": {
+        "contract": "VARCHAR(20)",
+        "description": "Đơn vị tính.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "unit_price": {
+        "contract": "INTEGER / VND",
+        "description": "Đơn giá bán theo đơn vị tính.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "discount_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Chiết khấu cho dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "tax_rate": {
+        "contract": "INTEGER / basis points",
+        "description": "Thuế suất theo điểm cơ bản; 1000 = 10%.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "line_total": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng dòng sau chiết khấu/thuế theo quy tắc kế toán.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(order_id, line_no); kiểm tra product và order cùng tenant.",
+    "unique": [
+      [
+        "order_id",
+        "line_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "shipments": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "shipment_code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã phiếu giao.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "customer_id": {
+        "contract": "UUID / FK → customers.id",
+        "description": "Khách nhận.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customers.id"
+      },
+      "sales_order_id": {
+        "contract": "UUID / FK → sales_orders.id / NULL",
+        "description": "Đơn bán nguồn.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "sales_orders.id"
+      },
+      "shipped_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm xuất/giao.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "delivered_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm xác nhận giao.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "carrier": {
+        "contract": "VARCHAR(120) / NULL",
+        "description": "Đơn vị vận chuyển.",
+        "nullable": true,
+        "type": "string",
+        "length": 120
+      },
+      "tracking_no": {
+        "contract": "VARCHAR(120) / NULL",
+        "description": "Mã vận đơn.",
+        "nullable": true,
+        "type": "string",
+        "length": 120
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, ready, shipped, delivered, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "ready",
+          "shipped",
+          "delivered",
+          "cancelled"
+        ],
+        "default": "draft"
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người tạo.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, shipment_code). Ghi sổ xuất kho phải nằm trong transaction DB.",
+    "unique": [
+      [
+        "organization_id",
+        "shipment_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "shipment_lines": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "shipment_id": {
+        "contract": "UUID / FK → shipments.id",
+        "description": "Phiếu giao.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "shipments.id"
+      },
+      "sales_order_line_id": {
+        "contract": "UUID / FK → sales_order_lines.id / NULL",
+        "description": "Dòng đơn bán nguồn.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "sales_order_lines.id"
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Sản phẩm.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng giao.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "uom": {
+        "contract": "VARCHAR(20)",
+        "description": "Đơn vị tính.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Validate số lượng giao lũy kế không vượt phần còn được giao; nếu cho phép over-shipment phải cấu hình rõ.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "suppliers": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "supplier_code": {
+        "contract": "VARCHAR(50) / NOT NULL",
+        "description": "Mã nhà cung cấp.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(200) / NOT NULL",
+        "description": "Tên nhà cung cấp.",
+        "nullable": false,
+        "type": "string",
+        "length": 200
+      },
+      "tax_code": {
+        "contract": "VARCHAR(50) / NULL",
+        "description": "Mã số thuế.",
+        "nullable": true,
+        "type": "string",
+        "length": 50
+      },
+      "phone": {
+        "contract": "VARCHAR(30) / NULL",
+        "description": "Điện thoại.",
+        "nullable": true,
+        "type": "string",
+        "length": 30
+      },
+      "email": {
+        "contract": "VARCHAR(255) / NULL",
+        "description": "Email.",
+        "nullable": true,
+        "type": "string",
+        "length": 255
+      },
+      "address": {
+        "contract": "TEXT / NULL",
+        "description": "Địa chỉ.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "active, inactive, blocked…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "active",
+          "inactive",
+          "blocked"
+        ],
+        "default": "active"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, supplier_code).",
+    "unique": [
+      [
+        "organization_id",
+        "supplier_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "purchase_orders": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "po_code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã PO.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "supplier_id": {
+        "contract": "UUID / FK → suppliers.id",
+        "description": "Nhà cung cấp.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "suppliers.id"
+      },
+      "ordered_at": {
+        "contract": "DATETIME",
+        "description": "Ngày đặt.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "expected_date": {
+        "contract": "DATE / NULL",
+        "description": "Ngày dự kiến nhận.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, approved, partially_received, received, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "approved",
+          "partially_received",
+          "received",
+          "cancelled"
+        ],
+        "default": "draft"
+      },
+      "currency": {
+        "contract": "CHAR(3) / DEFAULT VND",
+        "description": "Phiên bản 1 chỉ chấp nhận VND.",
+        "nullable": false,
+        "type": "string",
+        "length": 3,
+        "enum": [
+          "VND"
+        ],
+        "default": "VND"
+      },
+      "subtotal_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng trước thuế.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "tax_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng thuế.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "total_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng đơn mua.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người tạo.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, po_code).",
+    "unique": [
+      [
+        "organization_id",
+        "po_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "purchase_order_lines": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "purchase_order_id": {
+        "contract": "UUID / FK → purchase_orders.id",
+        "description": "PO cha.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "purchase_orders.id"
+      },
+      "line_no": {
+        "contract": "INTEGER",
+        "description": "Số thứ tự dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Sản phẩm.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "description": {
+        "contract": "TEXT / NULL",
+        "description": "Mô tả chốt khi đặt.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng đặt.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "received_quantity": {
+        "contract": "DECIMAL(18,6) / DEFAULT 0",
+        "description": "Lượng đã nhận, cập nhật qua nghiệp vụ nhận hàng.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "uom": {
+        "contract": "VARCHAR(20)",
+        "description": "Đơn vị tính.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "unit_price": {
+        "contract": "INTEGER / VND",
+        "description": "Đơn giá mua.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "tax_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Thuế của dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(purchase_order_id, line_no); quantity và received_quantity phải không âm; received_quantity không vượt quantity nếu không cho phép nhận dư.",
+    "unique": [
+      [
+        "purchase_order_id",
+        "line_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "supplier_bills": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "supplier_id": {
+        "contract": "UUID / FK → suppliers.id",
+        "description": "Nhà cung cấp.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "suppliers.id"
+      },
+      "purchase_order_id": {
+        "contract": "UUID / FK → purchase_orders.id / NULL",
+        "description": "PO liên quan.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "purchase_orders.id"
+      },
+      "bill_no": {
+        "contract": "VARCHAR(100) / NOT NULL",
+        "description": "Số hóa đơn nhà cung cấp.",
+        "nullable": false,
+        "type": "string",
+        "length": 100
+      },
+      "bill_date": {
+        "contract": "DATE",
+        "description": "Ngày hóa đơn.",
+        "nullable": false,
+        "type": "date",
+        "length": null
+      },
+      "due_date": {
+        "contract": "DATE / NULL",
+        "description": "Ngày đến hạn.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "subtotal_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tiền trước thuế.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "tax_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Thuế.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "total_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng phải trả.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "currency": {
+        "contract": "CHAR(3) / DEFAULT VND",
+        "description": "Phiên bản 1 chỉ chấp nhận VND.",
+        "nullable": false,
+        "type": "string",
+        "length": 3,
+        "enum": [
+          "VND"
+        ],
+        "default": "VND"
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, posted, partially_paid, paid, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "posted",
+          "partially_paid",
+          "paid",
+          "cancelled"
+        ],
+        "default": "draft"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, supplier_id, bill_no).",
+    "unique": [
+      [
+        "organization_id",
+        "supplier_id",
+        "bill_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "supplier_payments": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "supplier_id": {
+        "contract": "UUID / FK → suppliers.id",
+        "description": "Nhà cung cấp.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "suppliers.id"
+      },
+      "payment_code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã phiếu chi.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "paid_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm thanh toán.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "amount": {
+        "contract": "INTEGER / VND",
+        "description": "Số tiền thanh toán.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "currency": {
+        "contract": "CHAR(3) / DEFAULT VND",
+        "description": "Phiên bản 1 chỉ chấp nhận VND.",
+        "nullable": false,
+        "type": "string",
+        "length": 3,
+        "enum": [
+          "VND"
+        ],
+        "default": "VND"
+      },
+      "payment_method": {
+        "contract": "VARCHAR(30)",
+        "description": "cash, bank_transfer, other…",
+        "nullable": false,
+        "type": "string",
+        "length": 30
+      },
+      "external_reference": {
+        "contract": "VARCHAR(160) / NULL",
+        "description": "Mã tham chiếu giao dịch ngân hàng.",
+        "nullable": true,
+        "type": "string",
+        "length": 160
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, verified, voided…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "verified",
+          "voided"
+        ],
+        "default": "draft"
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người lập.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, payment_code). Không sửa giao dịch đã hạch toán; sai sót phải đảo/ghi nhận bút toán điều chỉnh.",
+    "unique": [
+      [
+        "organization_id",
+        "payment_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "warehouses": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "site_id": {
+        "contract": "UUID / FK → sites.id",
+        "description": "Cơ sở.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "sites.id"
+      },
+      "code": {
+        "contract": "VARCHAR(50) / NOT NULL",
+        "description": "Mã kho.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(160) / NOT NULL",
+        "description": "Tên kho.",
+        "nullable": false,
+        "type": "string",
+        "length": 160
+      },
+      "location": {
+        "contract": "TEXT / NULL",
+        "description": "Địa chỉ/vị trí mô tả.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "is_active": {
+        "contract": "BOOLEAN",
+        "description": "Trạng thái.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, code).",
+    "unique": [
+      [
+        "organization_id",
+        "code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "warehouse_locations": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "warehouse_id": {
+        "contract": "UUID / FK → warehouses.id",
+        "description": "Kho cha.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "warehouses.id"
+      },
+      "code": {
+        "contract": "VARCHAR(50)",
+        "description": "Mã vị trí.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "name": {
+        "contract": "VARCHAR(160)",
+        "description": "Tên vị trí.",
+        "nullable": false,
+        "type": "string",
+        "length": 160
+      },
+      "location_type": {
+        "contract": "VARCHAR(30)",
+        "description": "rack, bin, staging, quarantine…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "default": "bin"
+      },
+      "is_active": {
+        "contract": "BOOLEAN / DEFAULT TRUE",
+        "description": "Vị trí còn sử dụng.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(warehouse_id, code).",
+    "unique": [
+      [
+        "warehouse_id",
+        "code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "inventory_lots": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Vật tư/sản phẩm.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "lot_code": {
+        "contract": "VARCHAR(100) / NOT NULL",
+        "description": "Mã lô.",
+        "nullable": false,
+        "type": "string",
+        "length": 100
+      },
+      "supplier_id": {
+        "contract": "UUID / FK → suppliers.id / NULL",
+        "description": "Nhà cung cấp nguồn.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "suppliers.id"
+      },
+      "manufactured_at": {
+        "contract": "DATE / NULL",
+        "description": "Ngày sản xuất.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "expires_at": {
+        "contract": "DATE / NULL",
+        "description": "Ngày hết hạn.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "received_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm nhận.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "source_document_id": {
+        "contract": "UUID / FK → documents.id / NULL",
+        "description": "Chứng từ đính kèm.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "documents.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Khuyến nghị UNIQUE(organization_id, product_id, lot_code); kiểm tra lot và product cùng tenant.",
+    "unique": [
+      [
+        "organization_id",
+        "product_id",
+        "lot_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "inventory_units": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Sản phẩm.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "lot_id": {
+        "contract": "UUID / FK → inventory_lots.id / NULL",
+        "description": "Lô.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "inventory_lots.id"
+      },
+      "roll_code": {
+        "contract": "VARCHAR(100) / NOT NULL",
+        "description": "Mã cuộn; duy nhất trong tổ chức.",
+        "nullable": false,
+        "type": "string",
+        "length": 100
+      },
+      "warehouse_id": {
+        "contract": "UUID / FK → warehouses.id",
+        "description": "Kho hiện tại.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "warehouses.id"
+      },
+      "location_id": {
+        "contract": "UUID / FK → warehouse_locations.id / NULL",
+        "description": "Vị trí hiện tại; phải thuộc warehouse_id.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "warehouse_locations.id"
+      },
+      "initial_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng ban đầu.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "remaining_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng tồn hiện tại; số dư cache được cập nhật cùng bút toán.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "uom": {
+        "contract": "VARCHAR(20)",
+        "description": "Đơn vị tính.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "unit_cost": {
+        "contract": "INTEGER / VND",
+        "description": "Giá vốn trên một đơn vị tính; giá trị tồn = remaining_quantity × unit_cost theo quy tắc làm tròn.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "available, reserved, consumed, quarantined, scrapped…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "available",
+          "reserved",
+          "consumed",
+          "quarantined",
+          "scrapped",
+          "in_transit"
+        ],
+        "default": "available"
+      },
+      "received_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm nhập.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật số dư/vị trí.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, roll_code). Bảng này là số dư hiện thời; lịch sử bất biến nằm ở inventory_movements.",
+    "unique": [
+      [
+        "organization_id",
+        "roll_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "inventory_movements": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "movement_code": {
+        "contract": "VARCHAR(70) / NOT NULL",
+        "description": "Mã bút toán kho.",
+        "nullable": false,
+        "type": "string",
+        "length": 70
+      },
+      "movement_type": {
+        "contract": "VARCHAR(30)",
+        "description": "receipt, issue, transfer_out, transfer_in, production_consume, production_output, adjustment, reversal…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "receipt",
+          "issue",
+          "transfer_out",
+          "transfer_in",
+          "production_consume",
+          "production_output",
+          "adjustment",
+          "reversal"
+        ]
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Sản phẩm.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "inventory_unit_id": {
+        "contract": "UUID / FK → inventory_units.id / NULL",
+        "description": "Cuộn/đơn vị truy xuất.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "inventory_units.id"
+      },
+      "lot_id": {
+        "contract": "UUID / FK → inventory_lots.id / NULL",
+        "description": "Lô.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "inventory_lots.id"
+      },
+      "warehouse_id": {
+        "contract": "UUID / FK → warehouses.id",
+        "description": "Kho tác động.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "warehouses.id"
+      },
+      "location_id": {
+        "contract": "UUID / FK → warehouse_locations.id / NULL",
+        "description": "Vị trí tại thời điểm ghi bút toán.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "warehouse_locations.id"
+      },
+      "quantity_delta": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng có dấu: dương nhập, âm xuất.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "unit_cost": {
+        "contract": "INTEGER / VND",
+        "description": "Giá vốn trên một đơn vị.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "total_value": {
+        "contract": "INTEGER / VND",
+        "description": "Giá trị tuyệt đối của bút toán; quy tắc dấu được xác định bởi quantity_delta.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "occurred_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm nghiệp vụ phát sinh.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "reference_type": {
+        "contract": "VARCHAR(50)",
+        "description": "Loại chứng từ nguồn.",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "reference_id": {
+        "contract": "UUID / NULL",
+        "description": "ID chứng từ nguồn.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null
+      },
+      "idempotency_key": {
+        "contract": "VARCHAR(120) / NOT NULL",
+        "description": "Khóa chống tạo bút toán trùng.",
+        "nullable": false,
+        "type": "string",
+        "length": 120
+      },
+      "actor_user_id": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người thực hiện.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm ghi sổ.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, movement_code) và UNIQUE(organization_id, idempotency_key). Cấm UPDATE/DELETE cả ở service và trigger DB; sai sót dùng bút toán đảo.",
+    "unique": [
+      [
+        "organization_id",
+        "movement_code"
+      ],
+      [
+        "organization_id",
+        "idempotency_key"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "stock_transfers": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "transfer_code": {
+        "contract": "VARCHAR(70) / NOT NULL",
+        "description": "Mã điều chuyển.",
+        "nullable": false,
+        "type": "string",
+        "length": 70
+      },
+      "from_warehouse_id": {
+        "contract": "UUID / FK → warehouses.id",
+        "description": "Kho xuất.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "warehouses.id"
+      },
+      "to_warehouse_id": {
+        "contract": "UUID / FK → warehouses.id",
+        "description": "Kho nhận; khác kho xuất.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "warehouses.id"
+      },
+      "requested_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm yêu cầu.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "shipped_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm xuất đi.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "received_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm xác nhận nhận.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, requested, shipped, received, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "requested",
+          "shipped",
+          "received",
+          "cancelled"
+        ],
+        "default": "draft"
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người tạo.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, transfer_code). Luồng vận chuyển phải ghi transfer_out và transfer_in đúng trạng thái.",
+    "unique": [
+      [
+        "organization_id",
+        "transfer_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "stock_transfer_lines": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "transfer_id": {
+        "contract": "UUID / FK → stock_transfers.id",
+        "description": "Phiếu điều chuyển.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "stock_transfers.id"
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Sản phẩm.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "inventory_unit_id": {
+        "contract": "UUID / FK → inventory_units.id / NULL",
+        "description": "Cuộn điều chuyển.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "inventory_units.id"
+      },
+      "lot_id": {
+        "contract": "UUID / FK → inventory_lots.id / NULL",
+        "description": "Lô.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "inventory_lots.id"
+      },
+      "quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng điều chuyển.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "uom": {
+        "contract": "VARCHAR(20)",
+        "description": "Đơn vị tính.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Kiểm tra cuộn/lô thuộc kho nguồn và cùng tenant; không cho điều chuyển vượt tồn khả dụng.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "bills_of_materials": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "bom_code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã BOM.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Thành phẩm được tạo.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "version_no": {
+        "contract": "INTEGER",
+        "description": "Phiên bản BOM.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 1
+      },
+      "output_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng thành phẩm đầu ra chuẩn.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "effective_from": {
+        "contract": "DATE / NULL",
+        "description": "Ngày hiệu lực từ.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "effective_to": {
+        "contract": "DATE / NULL",
+        "description": "Ngày hiệu lực đến.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, active, obsolete…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "active",
+          "obsolete"
+        ],
+        "default": "draft"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, bom_code, version_no); không sửa phiên bản đang được lệnh sản xuất sử dụng mà cần tạo phiên bản mới.",
+    "unique": [
+      [
+        "organization_id",
+        "bom_code",
+        "version_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "bom_lines": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "bom_id": {
+        "contract": "UUID / FK → bills_of_materials.id",
+        "description": "BOM cha.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "bills_of_materials.id"
+      },
+      "line_no": {
+        "contract": "INTEGER",
+        "description": "Thứ tự dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null
+      },
+      "component_product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Nguyên vật liệu/ bán thành phẩm thành phần.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Lượng tiêu hao cho output_quantity.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "uom": {
+        "contract": "VARCHAR(20)",
+        "description": "Đơn vị tính.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "scrap_rate": {
+        "contract": "INTEGER / basis points",
+        "description": "Tỷ lệ hao hụt; 100 = 1%.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(bom_id, line_no); chặn BOM vòng lặp nếu quy trình không cho phép.",
+    "unique": [
+      [
+        "bom_id",
+        "line_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "work_centers": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "site_id": {
+        "contract": "UUID / FK → sites.id",
+        "description": "Cơ sở.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "sites.id"
+      },
+      "code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã trung tâm.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "name": {
+        "contract": "VARCHAR(160) / NOT NULL",
+        "description": "Tên.",
+        "nullable": false,
+        "type": "string",
+        "length": 160
+      },
+      "capacity_minutes_per_day": {
+        "contract": "INTEGER",
+        "description": "Công suất phút/ngày.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "is_active": {
+        "contract": "BOOLEAN",
+        "description": "Trạng thái.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": true
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, code).",
+    "unique": [
+      [
+        "organization_id",
+        "code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "machines": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "work_center_id": {
+        "contract": "UUID / FK → work_centers.id",
+        "description": "Trung tâm làm việc.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "work_centers.id"
+      },
+      "machine_code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã máy.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "name": {
+        "contract": "VARCHAR(160)",
+        "description": "Tên máy.",
+        "nullable": false,
+        "type": "string",
+        "length": 160
+      },
+      "serial_no": {
+        "contract": "VARCHAR(100) / NULL",
+        "description": "Số serial.",
+        "nullable": true,
+        "type": "string",
+        "length": 100
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "active, maintenance, idle, retired…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "active",
+          "maintenance",
+          "idle",
+          "retired"
+        ],
+        "default": "active"
+      },
+      "commissioned_on": {
+        "contract": "DATE / NULL",
+        "description": "Ngày đưa vào sử dụng.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, machine_code).",
+    "unique": [
+      [
+        "organization_id",
+        "machine_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "production_orders": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "production_order_code": {
+        "contract": "VARCHAR(70) / NOT NULL",
+        "description": "Mã lệnh sản xuất.",
+        "nullable": false,
+        "type": "string",
+        "length": 70
+      },
+      "product_id": {
+        "contract": "UUID / FK → products.id",
+        "description": "Sản phẩm đầu ra.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "products.id"
+      },
+      "bom_id": {
+        "contract": "UUID / FK → bills_of_materials.id",
+        "description": "BOM phiên bản đã chọn.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "bills_of_materials.id"
+      },
+      "sales_order_line_id": {
+        "contract": "UUID / FK → sales_order_lines.id / NULL",
+        "description": "Dòng đơn bán cần đáp ứng.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "sales_order_lines.id"
+      },
+      "planned_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng kế hoạch.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "released_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng đã phát hành/cho phép sản xuất.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "good_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Sản lượng đạt.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "scrap_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Sản lượng phế phẩm.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "planned_start_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Kế hoạch bắt đầu.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "planned_end_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Kế hoạch kết thúc.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "actual_start_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thực tế bắt đầu.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "actual_end_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thực tế kết thúc.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, released, in_progress, completed, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "released",
+          "in_progress",
+          "completed",
+          "cancelled"
+        ],
+        "default": "draft"
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người lập.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, production_order_code); BOM và sản phẩm phải tương thích cùng tenant.",
+    "unique": [
+      [
+        "organization_id",
+        "production_order_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "production_order_operations": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "production_order_id": {
+        "contract": "UUID / FK → production_orders.id",
+        "description": "Lệnh sản xuất.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "production_orders.id"
+      },
+      "sequence_no": {
+        "contract": "INTEGER",
+        "description": "Thứ tự công đoạn.",
+        "nullable": false,
+        "type": "integer",
+        "length": null
+      },
+      "work_center_id": {
+        "contract": "UUID / FK → work_centers.id",
+        "description": "Trung tâm làm việc.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "work_centers.id"
+      },
+      "machine_id": {
+        "contract": "UUID / FK → machines.id / NULL",
+        "description": "Máy dự kiến/thực hiện.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "machines.id"
+      },
+      "planned_start_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Bắt đầu theo kế hoạch.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "planned_end_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Kết thúc theo kế hoạch.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "actual_start_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Bắt đầu thực tế.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "actual_end_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Kết thúc thực tế.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "pending, ready, in_progress, completed, blocked…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "pending",
+          "ready",
+          "in_progress",
+          "completed",
+          "blocked"
+        ],
+        "default": "pending"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(production_order_id, sequence_no); machine nếu có phải thuộc work_center tương ứng.",
+    "unique": [
+      [
+        "production_order_id",
+        "sequence_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "production_reports": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "production_order_id": {
+        "contract": "UUID / FK → production_orders.id",
+        "description": "Lệnh sản xuất.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "production_orders.id"
+      },
+      "operation_id": {
+        "contract": "UUID / FK → production_order_operations.id / NULL",
+        "description": "Công đoạn.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "production_order_operations.id"
+      },
+      "reported_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người báo cáo.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "reported_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm báo cáo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "good_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Sản lượng đạt trong lần báo cáo.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "scrap_quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Sản lượng phế phẩm.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "scrap_value": {
+        "contract": "INTEGER / VND",
+        "description": "Ước tính tiền phế phẩm; cần quy tắc tính giá vốn thống nhất.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "downtime_minutes": {
+        "contract": "INTEGER / DEFAULT 0",
+        "description": "Số phút dừng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "downtime_reason": {
+        "contract": "VARCHAR(120) / NULL",
+        "description": "Mã/nguyên nhân dừng.",
+        "nullable": true,
+        "type": "string",
+        "length": 120
+      },
+      "notes": {
+        "contract": "TEXT / NULL",
+        "description": "Ghi chú.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Báo cáo đã xác nhận nên là lịch sử; điều chỉnh bằng báo cáo bổ sung/đính chính có truy vết.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "tasks": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "task_code": {
+        "contract": "VARCHAR(60) / NOT NULL",
+        "description": "Mã công việc.",
+        "nullable": false,
+        "type": "string",
+        "length": 60
+      },
+      "title": {
+        "contract": "VARCHAR(250) / NOT NULL",
+        "description": "Tiêu đề.",
+        "nullable": false,
+        "type": "string",
+        "length": 250
+      },
+      "description": {
+        "contract": "TEXT / NULL",
+        "description": "Mô tả.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "task_type": {
+        "contract": "VARCHAR(40)",
+        "description": "production, maintenance, approval, general…",
+        "nullable": false,
+        "type": "string",
+        "length": 40,
+        "enum": [
+          "production",
+          "maintenance",
+          "approval",
+          "general"
+        ],
+        "default": "general"
+      },
+      "priority": {
+        "contract": "VARCHAR(20)",
+        "description": "low, normal, high, urgent.",
+        "nullable": false,
+        "type": "string",
+        "length": 20,
+        "enum": [
+          "low",
+          "normal",
+          "high",
+          "urgent"
+        ],
+        "default": "normal"
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "open, in_progress, blocked, completed, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "open",
+          "in_progress",
+          "blocked",
+          "completed",
+          "cancelled"
+        ],
+        "default": "open"
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người tạo.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "production_order_id": {
+        "contract": "UUID / FK → production_orders.id / NULL",
+        "description": "Lệnh sản xuất liên quan.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "production_orders.id"
+      },
+      "start_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Bắt đầu.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "due_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Hạn hoàn thành.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "completed_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm hoàn thành.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, task_code).",
+    "unique": [
+      [
+        "organization_id",
+        "task_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "task_assignees": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "task_id": {
+        "contract": "UUID / FK → tasks.id",
+        "description": "Công việc.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "tasks.id"
+      },
+      "employee_id": {
+        "contract": "UUID / FK → employees.id",
+        "description": "Nhân viên được giao.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "employees.id"
+      },
+      "assigned_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người giao.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "assigned_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm giao.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "assigned, accepted, completed, removed…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "assigned",
+          "accepted",
+          "completed",
+          "removed"
+        ],
+        "default": "assigned"
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(task_id, employee_id); kiểm tra nhân viên cùng tenant.",
+    "unique": [
+      [
+        "task_id",
+        "employee_id"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "task_updates": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "task_id": {
+        "contract": "UUID / FK → tasks.id",
+        "description": "Công việc.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "tasks.id"
+      },
+      "employee_id": {
+        "contract": "UUID / FK → employees.id",
+        "description": "Người cập nhật.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "employees.id"
+      },
+      "update_type": {
+        "contract": "VARCHAR(30)",
+        "description": "comment, progress, status_change, attachment…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "comment",
+          "progress",
+          "status_change",
+          "attachment"
+        ]
+      },
+      "content": {
+        "contract": "TEXT / NULL",
+        "description": "Nội dung.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "progress_percent": {
+        "contract": "INTEGER / NULL",
+        "description": "0–100 nếu loại cập nhật là progress.",
+        "nullable": true,
+        "type": "integer",
+        "length": null
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Không ghi đè lịch sử cập nhật; nếu có tệp đính kèm thì liên kết documents qua phần mở rộng hoặc metadata nghiệp vụ.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "customer_invoices": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "invoice_no": {
+        "contract": "VARCHAR(100) / NOT NULL",
+        "description": "Số hóa đơn; duy nhất trong tổ chức.",
+        "nullable": false,
+        "type": "string",
+        "length": 100
+      },
+      "customer_id": {
+        "contract": "UUID / FK → customers.id",
+        "description": "Khách hàng.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customers.id"
+      },
+      "sales_order_id": {
+        "contract": "UUID / FK → sales_orders.id / NULL",
+        "description": "Đơn hàng liên quan.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "sales_orders.id"
+      },
+      "invoice_date": {
+        "contract": "DATE",
+        "description": "Ngày hóa đơn.",
+        "nullable": false,
+        "type": "date",
+        "length": null
+      },
+      "due_date": {
+        "contract": "DATE / NULL",
+        "description": "Ngày đến hạn.",
+        "nullable": true,
+        "type": "date",
+        "length": null
+      },
+      "currency": {
+        "contract": "CHAR(3) / DEFAULT VND",
+        "description": "Phiên bản 1 chỉ chấp nhận VND.",
+        "nullable": false,
+        "type": "string",
+        "length": 3,
+        "enum": [
+          "VND"
+        ],
+        "default": "VND"
+      },
+      "subtotal_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tiền trước thuế.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "tax_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tiền thuế.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "total_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng phải thu.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, issued, partially_paid, paid, overdue, voided…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "issued",
+          "partially_paid",
+          "paid",
+          "overdue",
+          "voided"
+        ],
+        "default": "draft"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, invoice_no). Hóa đơn đã phát hành không sửa trực tiếp tổng tiền; dùng quy trình điều chỉnh/hủy có kiểm soát.",
+    "unique": [
+      [
+        "organization_id",
+        "invoice_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "customer_invoice_lines": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "invoice_id": {
+        "contract": "UUID / FK → customer_invoices.id",
+        "description": "Hóa đơn.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customer_invoices.id"
+      },
+      "line_no": {
+        "contract": "INTEGER",
+        "description": "Thứ tự dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null
+      },
+      "sales_order_line_id": {
+        "contract": "UUID / FK → sales_order_lines.id / NULL",
+        "description": "Dòng đơn bán nguồn.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "sales_order_lines.id"
+      },
+      "description": {
+        "contract": "TEXT / NULL",
+        "description": "Mô tả tại thời điểm lập hóa đơn.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "quantity": {
+        "contract": "DECIMAL(18,6)",
+        "description": "Số lượng.",
+        "nullable": false,
+        "type": "quantity",
+        "length": null,
+        "default": "0"
+      },
+      "uom": {
+        "contract": "VARCHAR(20)",
+        "description": "Đơn vị.",
+        "nullable": false,
+        "type": "string",
+        "length": 20
+      },
+      "unit_price": {
+        "contract": "INTEGER / VND",
+        "description": "Đơn giá.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "tax_amount": {
+        "contract": "INTEGER / VND",
+        "description": "Tiền thuế dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "line_total": {
+        "contract": "INTEGER / VND",
+        "description": "Tổng dòng.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(invoice_id, line_no).",
+    "unique": [
+      [
+        "invoice_id",
+        "line_no"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "customer_receipts": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "receipt_code": {
+        "contract": "VARCHAR(70) / NOT NULL",
+        "description": "Mã phiếu thu.",
+        "nullable": false,
+        "type": "string",
+        "length": 70
+      },
+      "customer_id": {
+        "contract": "UUID / FK → customers.id",
+        "description": "Khách nộp tiền.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customers.id"
+      },
+      "received_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm nhận.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      },
+      "amount": {
+        "contract": "INTEGER / VND",
+        "description": "Số tiền nhận.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "currency": {
+        "contract": "CHAR(3) / DEFAULT VND",
+        "description": "Phiên bản 1 chỉ chấp nhận VND.",
+        "nullable": false,
+        "type": "string",
+        "length": 3,
+        "enum": [
+          "VND"
+        ],
+        "default": "VND"
+      },
+      "payment_method": {
+        "contract": "VARCHAR(30)",
+        "description": "cash, bank_transfer, other…",
+        "nullable": false,
+        "type": "string",
+        "length": 30
+      },
+      "external_reference": {
+        "contract": "VARCHAR(160) / NULL",
+        "description": "Mã giao dịch ngân hàng.",
+        "nullable": true,
+        "type": "string",
+        "length": 160
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, verified, voided…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "verified",
+          "voided"
+        ],
+        "default": "draft"
+      },
+      "verified_by": {
+        "contract": "UUID / FK → app_users.id / NULL",
+        "description": "Người xác nhận.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(organization_id, receipt_code); số tiền phân bổ không vượt số tiền đã xác nhận.",
+    "unique": [
+      [
+        "organization_id",
+        "receipt_code"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "customer_payment_allocations": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính để thống nhất quy tắc PK UUID.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "receipt_id": {
+        "contract": "UUID / FK → customer_receipts.id",
+        "description": "Phiếu thu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customer_receipts.id"
+      },
+      "invoice_id": {
+        "contract": "UUID / FK → customer_invoices.id",
+        "description": "Hóa đơn nhận phân bổ.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "customer_invoices.id"
+      },
+      "amount": {
+        "contract": "INTEGER / VND",
+        "description": "Số tiền gạch nợ.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm phân bổ.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "created_by": {
+        "contract": "UUID / FK → app_users.id / NULL",
+        "description": "Người thao tác.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant denormalized for composite FK enforcement",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: UNIQUE(receipt_id, invoice_id); xác minh cùng khách hàng/cùng tenant, không phân bổ vượt hóa đơn hoặc phiếu thu.",
+    "unique": [
+      [
+        "receipt_id",
+        "invoice_id"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "documents": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "original_name": {
+        "contract": "VARCHAR(255)",
+        "description": "Tên tệp ban đầu; không dùng làm đường dẫn lưu trữ.",
+        "nullable": false,
+        "type": "string",
+        "length": 255
+      },
+      "media_type": {
+        "contract": "VARCHAR(120)",
+        "description": "MIME type đã kiểm tra.",
+        "nullable": false,
+        "type": "string",
+        "length": 120
+      },
+      "byte_size": {
+        "contract": "INTEGER",
+        "description": "Dung lượng byte; giới hạn theo cấu hình.",
+        "nullable": false,
+        "type": "integer",
+        "length": null,
+        "default": 0
+      },
+      "storage_key": {
+        "contract": "VARCHAR(500) / UNIQUE",
+        "description": "Khóa nội bộ trong storage; không nhận đường dẫn tùy ý từ client.",
+        "nullable": false,
+        "type": "string",
+        "length": 500
+      },
+      "sha256": {
+        "contract": "CHAR(64)",
+        "description": "Hash kiểm tra toàn vẹn.",
+        "nullable": false,
+        "type": "string",
+        "length": 64
+      },
+      "uploaded_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người tải lên.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "received_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm nhận.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "source_kind": {
+        "contract": "VARCHAR(50)",
+        "description": "invoice, production, inventory, general…",
+        "nullable": false,
+        "type": "string",
+        "length": 50
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Kiểm tra quyền trước khi tải xuống; giới hạn loại tệp/dung lượng; không public bucket mặc định.",
+    "unique": [
+      [
+        "storage_key"
+      ],
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "audit_log": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "actor_user_id": {
+        "contract": "UUID / FK → app_users.id / NULL",
+        "description": "Tài khoản thực hiện; NULL cho tác vụ hệ thống có kiểm soát.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "action": {
+        "contract": "VARCHAR(80)",
+        "description": "create, update, issue, approve, login_failed…",
+        "nullable": false,
+        "type": "string",
+        "length": 80
+      },
+      "entity_type": {
+        "contract": "VARCHAR(100)",
+        "description": "Tên loại đối tượng.",
+        "nullable": false,
+        "type": "string",
+        "length": 100
+      },
+      "entity_id": {
+        "contract": "UUID / NULL",
+        "description": "ID đối tượng.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null
+      },
+      "old_json": {
+        "contract": "TEXT / NULL",
+        "description": "Snapshot cũ, đã loại bỏ mật khẩu/token/dữ liệu nhạy cảm.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "new_json": {
+        "contract": "TEXT / NULL",
+        "description": "Snapshot mới, đã loại bỏ dữ liệu nhạy cảm.",
+        "nullable": true,
+        "type": "string",
+        "length": null
+      },
+      "occurred_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm sự kiện.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "request_id": {
+        "contract": "VARCHAR(100) / NULL",
+        "description": "ID tương quan request.",
+        "nullable": true,
+        "type": "string",
+        "length": 100
+      },
+      "ip_address": {
+        "contract": "VARCHAR(45) / NULL",
+        "description": "IPv4/IPv6 nếu được phép lưu.",
+        "nullable": true,
+        "type": "string",
+        "length": 45
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Append-only theo chính sách; index theo organization_id, occurred_at, actor_user_id, entity_type/entity_id.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "kpi_targets": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "employee_id": {
+        "contract": "UUID / FK → employees.id",
+        "description": "Nhân viên nhận KPI.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "employees.id"
+      },
+      "assigned_by": {
+        "contract": "UUID / FK → app_users.id",
+        "description": "Người giao KPI.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "kpi_type": {
+        "contract": "VARCHAR(60)",
+        "description": "sales_revenue, scrap_rate, output_quantity…",
+        "nullable": false,
+        "type": "string",
+        "length": 60,
+        "enum": [
+          "sales_revenue",
+          "scrap_rate",
+          "output_quantity",
+          "task_completion"
+        ]
+      },
+      "target_amount": {
+        "contract": "INTEGER / VND / NULL",
+        "description": "Chỉ dùng cho KPI giá trị tiền.",
+        "nullable": true,
+        "type": "integer",
+        "length": null
+      },
+      "target_value": {
+        "contract": "DECIMAL(18,6) / NULL",
+        "description": "Mục tiêu định lượng cho KPI không phải tiền; đơn vị do kpi_type quy định.",
+        "nullable": true,
+        "type": "quantity",
+        "length": null
+      },
+      "period_start": {
+        "contract": "DATE",
+        "description": "Ngày bắt đầu kỳ.",
+        "nullable": false,
+        "type": "date",
+        "length": null
+      },
+      "period_end": {
+        "contract": "DATE",
+        "description": "Ngày kết thúc kỳ.",
+        "nullable": false,
+        "type": "date",
+        "length": null
+      },
+      "status": {
+        "contract": "VARCHAR(30)",
+        "description": "draft, active, completed, cancelled…",
+        "nullable": false,
+        "type": "string",
+        "length": 30,
+        "enum": [
+          "draft",
+          "active",
+          "completed",
+          "cancelled"
+        ],
+        "default": "draft"
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm tạo.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "updated_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm cập nhật.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: Cần kiểm tra chỉ có một trong target_amount/target_value phù hợp theo kpi_type và kỳ hợp lệ.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  },
+  "notifications": {
+    "columns": {
+      "id": {
+        "contract": "UUID / PK",
+        "description": "Khóa chính.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null
+      },
+      "organization_id": {
+        "contract": "UUID / FK → organizations.id",
+        "description": "Tenant sở hữu.",
+        "nullable": false,
+        "type": "uuid",
+        "length": null,
+        "references": "organizations.id"
+      },
+      "user_id": {
+        "contract": "UUID / FK → app_users.id / NULL",
+        "description": "Người nhận cụ thể; NULL chỉ dùng cho cảnh báo cấp tổ chức nếu có policy.",
+        "nullable": true,
+        "type": "uuid",
+        "length": null,
+        "references": "app_users.id"
+      },
+      "title": {
+        "contract": "VARCHAR(250)",
+        "description": "Tiêu đề.",
+        "nullable": false,
+        "type": "string",
+        "length": 250
+      },
+      "content": {
+        "contract": "TEXT",
+        "description": "Nội dung do quy tắc hoặc AI tạo; cần gắn nguồn dữ liệu để kiểm chứng.",
+        "nullable": false,
+        "type": "string",
+        "length": null
+      },
+      "type": {
+        "contract": "VARCHAR(20)",
+        "description": "info, warning, danger.",
+        "nullable": false,
+        "type": "string",
+        "length": 20,
+        "enum": [
+          "info",
+          "warning",
+          "danger"
+        ],
+        "default": "info"
+      },
+      "is_read": {
+        "contract": "BOOLEAN / DEFAULT FALSE",
+        "description": "Trạng thái đã đọc.",
+        "nullable": false,
+        "type": "boolean",
+        "length": null,
+        "default": false
+      },
+      "created_at": {
+        "contract": "DATETIME",
+        "description": "Thời điểm phát sinh.",
+        "nullable": false,
+        "type": "datetime",
+        "length": null,
+        "default": "utcnow"
+      },
+      "read_at": {
+        "contract": "DATETIME / NULL",
+        "description": "Thời điểm đọc.",
+        "nullable": true,
+        "type": "datetime",
+        "length": null
+      }
+    },
+    "rules": "Quan hệ/ràng buộc chính: API thường cho user xem thông báo của mình; ADMIN được xem thông báo toàn tổ chức nếu có quyền.",
+    "unique": [
+      [
+        "organization_id",
+        "id"
+      ]
+    ]
+  }
+}
