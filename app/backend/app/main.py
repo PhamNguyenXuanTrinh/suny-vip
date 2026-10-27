@@ -21,12 +21,10 @@ def create_app(settings=None):
     async def lifespan(app):
         cfg = settings or Settings.from_env()
         
-        # --- SỬA ĐỔI QUAN TRỌNG: TỰ ĐỘNG NHẬN DIỆN POSTGRESQL ---
         db_url = cfg.database_path if cfg.database_path.startswith('postgresql://') else 'sqlite:///' + str(Path(cfg.database_path).resolve())
         migrate(db_url)
         app.state.settings = cfg
         app.state.engine = make_engine(db_url)
-        # --------------------------------------------------------
 
         import asyncio, os
         async def alert_loop():
@@ -102,16 +100,18 @@ def create_app(settings=None):
         
     @app.exception_handler(sa.exc.IntegrityError)
     async def integrity_error(request, exc): 
-        return error(request, 'CONFLICT', 'Dữ liệu trùng hoặc vi phạm ràng buộc nghiệp vụ', 409)
+        log.error("LỖI DATABASE (IntegrityError): %s", str(exc.orig))
+        return error(request, 'CONFLICT', f'Lỗi Database: {str(exc.orig)}', 409)
         
     @app.exception_handler(sa.exc.StatementError)
     async def statement_error(request, exc): 
-        return error(request, 'VALIDATION', 'Dữ liệu không đúng định dạng', 422)
+        log.error("LỖI DATABASE (StatementError): %s", str(exc.orig))
+        return error(request, 'VALIDATION', f'Lỗi Database: {str(exc.orig)}', 422)
         
     @app.exception_handler(Exception)
     async def unexpected(request, exc):
         log.error('Unhandled request %s class %s', getattr(request.state, 'request_id', ''), type(exc).__name__)
-        return error(request, 'INTERNAL', 'Không xử lý được yêu cầu', 500)
+        return error(request, 'INTERNAL', f'Lỗi hệ thống: {str(exc)}', 500)
         
     @app.get('/api/v1/health')
     def health(request: Request):
